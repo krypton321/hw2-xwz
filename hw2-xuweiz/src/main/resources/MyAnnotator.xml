@@ -44,7 +44,7 @@
       <nameValuePair>
         <name>LingPipeModel</name>
         <value>
-          <string>MyDict.dic</string>
+          <string>/TrainedDict.dic</string>
         </value>
       </nameValuePair>
     </configurationParameterSettings>

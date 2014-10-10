@@ -1,4 +1,5 @@
 package edu.cmu.deiis.annotator;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,6 +23,12 @@ import com.aliasi.util.AbstractExternalizable;
 
 import edu.cmu.deiis.types.AnnotatorType;
 
+/**
+ * Description: Use LingPipe to recognize gene.
+ * 
+ * @author Xuwei Zou
+ *
+ */
 public class MyAnnotator extends JCasAnnotator_ImplBase {
 
   public static final String PARAM_DICTDIR = "DictDirectory";
@@ -32,14 +39,18 @@ public class MyAnnotator extends JCasAnnotator_ImplBase {
 
   /**
    * Initialize the LingPipe tool.
+   * 
+   * @param aContext
+   *          Initial file.
    */
   @Override
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
-   // File modelFile = new File("./src/main/resources", "MyDict.dic");
+    // File modelFile = new File("./src/main/resources", "MyDict.dic");
     try {
-     // mchunker = (ConfidenceChunker) AbstractExternalizable.readObject(modelFile);
-      String s = (String) aContext.getConfigParameterValue("LingPipeModel");
-      mchunker = (ConfidenceChunker) AbstractExternalizable.readResourceObject(MyAnnotator.class, (String) aContext.getConfigParameterValue("LingPipeModel"));
+      // mchunker = (ConfidenceChunker) AbstractExternalizable.readObject(modelFile);
+      // String s = (String) aContext.getConfigParameterValue("LingPipeModel");
+      mchunker = (ConfidenceChunker) AbstractExternalizable.readResourceObject(MyAnnotator.class,
+              (String) aContext.getConfigParameterValue("LingPipeModel"));
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -50,10 +61,11 @@ public class MyAnnotator extends JCasAnnotator_ImplBase {
   }
 
   /**
-   * Process the CAS provided by the Reader. Analysis tool will load dictionary from
-   * project/src/main/resources/MyDict.dic. Sentences will be analyze by tool and process into
-   * phrase and single word. Related information will be put into TypeSystem and be pushed back into
-   * CAS.
+   * Process the CAS provided by the Reader, analysis with LingPipe and put possible gene tag back
+   * into JCas.
+   * 
+   * @param aJCas
+   *          store sentence and ID to be processed. Gene tag will be store in JCas after generated.
    */
   @Override
   public void process(JCas aJCas) throws AnalysisEngineProcessException {

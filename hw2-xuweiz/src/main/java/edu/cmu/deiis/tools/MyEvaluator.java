@@ -1,4 +1,5 @@
 package edu.cmu.deiis.tools;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +10,12 @@ import java.util.HashMap;
 
 import org.apache.uima.util.FileUtils;
 
+/**
+ * Description: Evaluate performence of output file.
+ * 
+ * @author Xuwei Zou
+ *
+ */
 public class MyEvaluator {
   private int correct_num = 0;
 
@@ -16,9 +23,14 @@ public class MyEvaluator {
 
   private int supposed_num = 0;
 
-  // private String AnswerText = "";
   private HashMap<String, Boolean> map = new HashMap<String, Boolean>();
 
+  /**
+   * Load gold sample
+   * 
+   * @param pathname
+   *          Path to the gold sample.
+   */
   public void setAnswerText(String pathname) throws IOException {
     File filename = new File(pathname);
     String[] line = null;
@@ -30,17 +42,33 @@ public class MyEvaluator {
 
     }
 
-    // AnswerText = sb.toString();
   }
 
+  /**
+   * Get precision of output file.
+   * 
+   * @return double precision
+   */
   public double getPrecision() {
     return (double) correct_num / answer_num;
   }
 
+  /**
+   * Get recall of output file.
+   * 
+   * @return double recall
+   */
   public double getRecall() {
     return (double) correct_num / supposed_num;
   }
 
+  /**
+   * Determine if an answer is correct
+   * 
+   * @param ans
+   *          Output string
+   * @return boolean Correctness of answer
+   */
   public boolean judgeAnswer(String ans) {
     if (map == null)
       return false;
@@ -54,16 +82,32 @@ public class MyEvaluator {
     return false;
   }
 
+  /**
+   * Set total answered times
+   * 
+   * @param num
+   *          Answer number.
+   */
   public void setAnswernum(int num) {
     answer_num = num;
   }
 
+  /**
+   * Get F-score of output file.
+   * 
+   * @return double F-score
+   */
   public double getfScore() {
     double precision = getPrecision();
     double recall = getRecall();
     return 2.0 * precision * recall / (precision + recall);
   }
 
+  /**
+   * Print report of output file in console.
+   * 
+   * 
+   */
   public void printReport() {
     System.out.println();
     System.out.println("Correct Num:" + correct_num);

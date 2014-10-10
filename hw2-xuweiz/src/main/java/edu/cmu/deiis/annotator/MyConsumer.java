@@ -1,4 +1,5 @@
 package edu.cmu.deiis.annotator;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,8 +19,15 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.ResourceProcessException;
 import org.xml.sax.SAXException;
 
+import edu.cmu.deiis.tools.MyEvaluator;
 import edu.cmu.deiis.types.ConsumerType;
 
+/**
+ * Description: Output final result in file.
+ * 
+ * @author Xuwei Zou
+ *
+ */
 public class MyConsumer extends CasConsumer_ImplBase {
   public static final String PARAM_OUTPUTDIR = "OutputDirectory";
 
@@ -28,24 +36,24 @@ public class MyConsumer extends CasConsumer_ImplBase {
   private File mOutputDir;
 
   private String mOutputName;
-  
-//  private static MyEvaluator me = new MyEvaluator();
-  
-//  private  int anwsernumber =0;
-  
- // private  int casnumber =0 ;
-/**
- * Load parameters "OutputDirectory" and "OutputFileName" from linked Consumer descriptor 
- * as output directory and filename from .
- * Initialize output directory and output file.
- */
+
+ //  private static MyEvaluator me = new MyEvaluator();
+
+ //  private int anwsernumber =0;
+
+ //  private int casnumber =0 ;
+  /**
+   * 
+   * Initialize output directory and output file.
+   * 
+   */
   public void initialize() throws ResourceInitializationException {
     mOutputName = (String) getConfigParameterValue(PARAM_OUTPUTNAME);
-    mOutputDir = new File((String) getConfigParameterValue(PARAM_OUTPUTDIR),mOutputName);
-  //  mOutputDir = new File("","hw2-xuweiz.out");
-//    if (!mOutputDir.exists()) {
-//      mOutputDir.mkdirs();
-//    }
+    mOutputDir = new File((String) getConfigParameterValue(PARAM_OUTPUTDIR), mOutputName);
+    // mOutputDir = new File("","hw2-xuweiz.out");
+    // if (!mOutputDir.exists()) {
+    // mOutputDir.mkdirs();
+    // }
     PrintWriter writer = null;
     try {
       writer = new PrintWriter(mOutputDir);
@@ -53,23 +61,27 @@ public class MyConsumer extends CasConsumer_ImplBase {
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
-    finally{
+    } finally {
       try {
         writer.close();
       } catch (Exception ex) {
       }
     }
-//    try {
-//      me.setAnswerText("./src/main/resources/data/GENE.eval");
-//    } catch (IOException e) {
-//      // TODO Auto-generated catch block
-//      e.printStackTrace();
-//    }
+//     try {
+//     me.setAnswerText("./src/main/resources/data/GENE.eval");
+//     } catch (IOException e) {
+//     // TODO Auto-generated catch block
+//     e.printStackTrace();
+//     }
   }
-/**
- * Receive CAS from AE. Exclude the whitespace offset and output the results to the given directory.
- */
+
+  /**
+   * Receive CAS from AE. Exclude the whitespace offset and output the results to the given
+   * directory.
+   * 
+   * @param aJCas
+   *          store final result
+   */
   @Override
   public void processCas(CAS aCAS) throws ResourceProcessException {
     // TODO Auto-generated method stub
@@ -82,7 +94,7 @@ public class MyConsumer extends CasConsumer_ImplBase {
     }
     FSIterator<Annotation> it = jcas.getAnnotationIndex(ConsumerType.type).iterator();
     String sent = jcas.getDocumentText();
-  //  casnumber++;
+  //   casnumber++;
 
     while (it.hasNext()) {
       ConsumerType mts = (ConsumerType) it.next();
@@ -106,15 +118,15 @@ public class MyConsumer extends CasConsumer_ImplBase {
       start -= wss;
       end -= ws;
 
-      String str = mts.getMark() + "|" + start+ " " + end + "|" + mts.getGene();
-   //   boolean result = me.judgeAnswer(str);
- //     anwsernumber++;
+      String str = mts.getMark() + "|" + start + " " + end + "|" + mts.getGene();
+     //  boolean result = me.judgeAnswer(str);
+//       anwsernumber++;
       FileWriter writer = null;
       BufferedWriter bw = null;
       try {
         writer = new FileWriter(mOutputDir, true);
         bw = new BufferedWriter(writer);
-        bw.append(str+" "+ "\n");
+        bw.append(str + "\n");
 
       } catch (IOException e) {
         throw new ResourceProcessException(e);
@@ -130,13 +142,13 @@ public class MyConsumer extends CasConsumer_ImplBase {
 
       }
     }
-//    me.setAnswernum(anwsernumber);
-//    me.printReport();
-//    int cassize = jcas.size()/200;
-//   if(casnumber>= cassize){
-//    me.setAnswernum(anwsernumber);
-//    me.printReport();
-//   }
+//     me.setAnswernum(anwsernumber);
+//     me.printReport();
+//     int cassize = jcas.size()/200;
+//     if(casnumber>= cassize){
+//     me.setAnswernum(anwsernumber);
+//     me.printReport();
+//     }
   }
 
 }

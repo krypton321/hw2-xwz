@@ -1,4 +1,5 @@
 package edu.cmu.deiis.annotator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -14,17 +15,29 @@ import org.apache.uima.jcas.tcas.Annotation;
 import edu.cmu.deiis.types.AnnotatorType;
 import edu.cmu.deiis.types.ConsumerType;
 
+/**
+ * Description: Evaluate the output of LingPipe and ABNER
+ * 
+ * @author Xuwei Zou
+ *
+ */
 public class MyCASEvaluator extends JCasAnnotator_ImplBase {
   // HashMap<Integer,Integer> map = new HashMap<Integer,Integer>();
   static int num = 0;;
 
+  /**
+   * Evaluate output.
+   * 
+   * @param aJCas
+   *          Get result of LingPipe and ABNER. Qualified output will be put back into JCas.
+   */
   @Override
   public void process(JCas aJCas) throws AnalysisEngineProcessException {
     // TODO Auto-generated method stub
+    String doc = aJCas.getDocumentText();
     HashMap<Integer, Integer> Bmap = new HashMap<Integer, Integer>();
     ArrayList<AnnotatorType> Llist = new ArrayList<AnnotatorType>();
-    String doc = aJCas.getDocumentText();
-    FSIterator it = aJCas.getAnnotationIndex(AnnotatorType.type).iterator();
+    FSIterator<Annotation> it = aJCas.getAnnotationIndex(AnnotatorType.type).iterator();
     // AnnotatorType mts = null;
     while (it.hasNext()) {
       AnnotatorType mts = (AnnotatorType) it.next();
@@ -45,7 +58,6 @@ public class MyCASEvaluator extends JCasAnnotator_ImplBase {
       int start = mts.getBegin();
       int end = mts.getEnd();
       double conf = mts.getConfidence();
-      String processid = mts.getCasProcessorId();
 
       if (conf > 0.8) {
         if (regexcheck(mts.getGene()))
@@ -63,14 +75,14 @@ public class MyCASEvaluator extends JCasAnnotator_ImplBase {
           }
         }
 
-      }
+     }
     }
 
   }
 
-  public boolean regexcheck(String str) {
+  private boolean regexcheck(String str) {
     char[] c = str.toCharArray();
-    Stack s = new Stack<Integer>();
+    Stack<Integer> s = new Stack<Integer>();
     for (int i = 0; i < c.length; i++) {
       if (c[i] == '(') {
         s.push(1);
@@ -90,7 +102,7 @@ public class MyCASEvaluator extends JCasAnnotator_ImplBase {
     }
   }
 
-  public void addIndex(JCas aJCas, AnnotatorType a) {
+  private void addIndex(JCas aJCas, AnnotatorType a) {
     ConsumerType mys = new ConsumerType(aJCas);
     mys.setBegin(a.getBegin());
     mys.setEnd(a.getEnd());

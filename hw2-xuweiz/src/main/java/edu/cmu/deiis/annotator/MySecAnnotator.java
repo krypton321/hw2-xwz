@@ -1,4 +1,5 @@
 package edu.cmu.deiis.annotator;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,15 +22,33 @@ import com.aliasi.util.AbstractExternalizable;
 
 import edu.cmu.deiis.types.AnnotatorType;
 
+/**
+ * Description: Use ABNER to recognize gene.
+ * 
+ * @author Xuwei Zou
+ *
+ */
 public class MySecAnnotator extends JCasAnnotator_ImplBase {
-  private static Tagger tg ;
+  private static Tagger tg;
+
   /**
-   * Initialize the LingPipe tool.
+   * Initialize the ABNER tool.
+   * 
+   * @param aContext
+   *          Initial file.
    */
   @Override
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
     tg = new Tagger();
   }
+
+  /**
+   * Process the CAS provided by the Reader, analysis with ABNER and put possible gene tag back into
+   * JCas.
+   * 
+   * @param aJCas
+   *          store sentence and ID to be processed. Gene tag will be store in JCas after generated.
+   */
   @Override
   public void process(JCas aJCas) throws AnalysisEngineProcessException {
     String doc = aJCas.getDocumentText();
@@ -40,8 +59,8 @@ public class MySecAnnotator extends JCasAnnotator_ImplBase {
       mts = (AnnotatorType) it.next();
       mark = mts.getMark();
     }
-    String[][] s =tg.getEntities(doc);
-    for(int i = 0;i<s[0].length;i++){
+    String[][] s = tg.getEntities(doc);
+    for (int i = 0; i < s[0].length; i++) {
       String Entitys = s[0][i];
       AnnotatorType mys = new AnnotatorType(aJCas);
       mys.setMark(mark);
@@ -52,11 +71,10 @@ public class MySecAnnotator extends JCasAnnotator_ImplBase {
       mys.setEnd(end);
       mys.setCasProcessorId("ABNER");
       mys.setConfidence(0);
-      if(start == -1){
-        
-      }
-      else{
-        
+      if (start == -1) {
+
+      } else {
+
         mys.addToIndexes();
       }
     }
